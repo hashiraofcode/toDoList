@@ -1,11 +1,21 @@
 // tarefas a serem renderizadas
-const toDoListData = [
+let toDoListData = [
         {id:1, description: "passear com o cachorro", checked: false},
         {id:2, description: "fazer faxina", checked: false},
         {id:3, description: "fazer compras", checked: false},
         {id:4, description: "andar de bicicleta", checked: false},
     ];
 
+// função para deletar tarefa;
+const removeTask = (taskId) => {
+    const list = document.getElementById("lista")
+    const removeItem = document.getElementById(taskId);
+     toDoListData = toDoListData.filter(({id}) => {
+        parseInt(taskId) !== parseInt(id);
+    });
+    if(removeItem) list.removeChild(removeItem)
+    else console.log("Deu errado em alugm ponto da deleção da task");
+};
 // função que gera um novo id para cada nova task;
 const newTaskId = () => {
     const id = toDoListData[toDoListData.length - 1]?.id;
@@ -24,7 +34,7 @@ const newTaskData = (event) => {
         inputDOMTasks.value = "";
     }
     //função que cria os itens a serem renderizados
-    const createElementItem = (ArrayElement) => {
+    const createToDoItem = (ArrayElement) => {
         // Criando os elementos que vão ser utilizados;
         const checkBox = document.createElement("input");
         const label = document.createElement("label");
@@ -38,6 +48,11 @@ const newTaskData = (event) => {
         label.htmlFor = elementId;
         wrapper.classList.add("checkbox-label-container")
         label.textContent = ArrayElement.description;
+        button.textContent = "X";
+        button.ariaLabel = "Deletar tarefa";
+        button.addEventListener("click", () => {
+            removeTask(ArrayElement.id)
+        });
 
         wrapper.appendChild(checkBox);
         wrapper.appendChild(label);
@@ -47,22 +62,26 @@ const newTaskData = (event) => {
     } 
     
     // função que recebe as informações e cria uma nova tarefa;
-     
+ //pega o evento executa a function que separa as informações adequa elas para um object e executa a função que vai montar os elemtos da lista e retona o mesmo; 
 const newTask = (event) => {
     const objectTaskValue = {id:0, description:0, checked: false};
     const {newId, description} = newTaskData(event)
     objectTaskValue.id = newId;
     objectTaskValue.description = description; 
-    const taskItem = createElementItem(objectTaskValue);
-    toDoListData.push({id: newId, description: description, checked: false});
+    const taskItem = createToDoItem(objectTaskValue);
+    toDoListData.push(objectTaskValue);
     return taskItem;
 };
 
-
-const taskRenderizad = (newTask) => {
+// pega as informações prontas e renderiza elas
+// event necessário para pegar as informções e nomear o li;
+const taskRenderizad = (newTask, event) => {
     const lista = document.getElementById("lista");
+        //pegando o id do item da lista e colocando ele no li
+        const {newId} = newTaskData(event);
              // "li" que vai ir na lista;
             const listItem = document.createElement("li");
+            listItem.id = newId;
             const renderizedItem = newTask;
             // colocando o item no "li";
             listItem.appendChild(renderizedItem);
@@ -71,9 +90,15 @@ const taskRenderizad = (newTask) => {
 }
 const createToDoTask = (event) => {
     event.preventDefault()
+     const input = document.getElementById("description");
+    if (input.value != ""){
     const reserizedTask = newTask(event);
-    taskRenderizad(reserizedTask);
+    taskRenderizad(reserizedTask,event);
     inputDOMClear();
+    } else {
+        alert("Insira uma tarefa!!!")
+    }
+    
 }
 // essa proppriedade serve para esperar o navegador (document) estar pronto para executar o meu programa. Isso básicamente diz o que ele vai executar assim que o doc terminar de renderizar;
     window.onload = () => {
@@ -85,7 +110,8 @@ const createToDoTask = (event) => {
             const lista = document.getElementById("lista");
              // "li" que vai ir na lista;
             const listItem = document.createElement("li");
-            const finalItem = createElementItem(task);
+            listItem.id = task.id;
+            const finalItem = createToDoItem(task);
             // colocando o item no "li";
             listItem.appendChild(finalItem);
             // colocado o "li" na lista;
