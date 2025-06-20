@@ -121,6 +121,7 @@ main {
             padding: 1rem .7rem;
             font-size: 1.9rem;
             text-transform: capitalize;
+            color: #585858;
             & .checkbox-label-container {
                 display: flex;
                 align-items: center;

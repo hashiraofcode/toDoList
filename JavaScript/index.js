@@ -1,18 +1,53 @@
-let toDoListData = [
-        {id:1, description: "passear com o cachorro", checked: false},
-        {id:2, description: "fazer faxina", checked: false},
-        {id:3, description: "fazer compras", checked: false},
-        {id:4, description: "andar de bicicleta", checked: false},
-];
+// fazendo uma função que coloca um item de exemplo na exibição;
+    const setExempleTask = () => {
+       const exempleItemWrapper = document.createElement("li");
+       const exempleItemContent = document.createElement("p");
+       exempleItemWrapper.id = "list-item-exemplo";
+       exempleItemContent.textContent = "Escreva Uma tarefa!!!"
+       exempleItemWrapper.appendChild(exempleItemContent);
+        document.getElementById("lista").appendChild(exempleItemWrapper);
+    };
+// função que apaga o li que foi criado como exemplo;
+ const deleteExempleTask = () => {
+    const itemRemoved = document.getElementById("list-item-exemplo");
+    document.getElementById("lista").removeChild(itemRemoved);
+}
+// função que verifica se há tarefa em exibição;
+const taskInDisplay = () => {
+    if (toDoListData.length === 0) {
+        setExempleTask();
+    }
+}
+// função inicia array e carrega os dados do local storage nele;
+const getTasksFromLocalStorage = () => {
+    const localValue = window.localStorage.getItem("tasks");
+    return localValue? 
+    JSON.parse(localValue):
+    [];
+}
+let toDoListData = getTasksFromLocalStorage();
+console.log(toDoListData);
+// pegando as tarefas novas e mandando para o local storage;
+const setTasksInLocalStorage = (toDoListData) => {
+    const localValue = JSON.stringify(toDoListData);
+    window.localStorage.setItem("tasks", localValue);
+}
+// acessando um item no localStorage;
+const getItemFromLocalStorage = () => {
+    const localItem =JSON.parse(window.localStorage.getItem("tasks"));
+    return localItem;
+}
 // removendo tarefas marcadas como true;
 const removeTaskTrue = () => {
     const asRemoverItem = toDoListData.filter(({checked}) => checked);
     toDoListData = toDoListData.filter(({checked}) => !checked);
+    setTasksInLocalStorage(toDoListData);
     asRemoverItem.forEach(({id}) => {
         const itemAsRemoved = document.getElementById(String(id))
         document.getElementById("lista")
         .removeChild(itemAsRemoved);
     });
+    taskInDisplay();
 }
 // pegando o valor do input e atualizando ele na matriz;
 const getCheckboxChecked = (event) => {
@@ -29,6 +64,8 @@ const removerTask = (idItem) => {
     toDoListData = toDoListData.filter(({id}) => id != idItem);
     const deletedItem = document.getElementById(String(idItem));
     document.getElementById("lista").removeChild(deletedItem);
+    setTasksInLocalStorage(toDoListData);
+    taskInDisplay();
 }
 // renderiza o item;
 const getItem = (creatToDoItem) => {
@@ -65,9 +102,11 @@ const createNewTask = (event) => {
     objectValues.id = id;
     objectValues.description = description;
     toDoListData.push(objectValues);
+    setTasksInLocalStorage(toDoListData);
     console.log(objectValues)
     const item = creatToDoItem(objectValues);
     getItem(item);
+     deleteExempleTask();
     } else alert("Inseira uma tarefa válida");
 }
 
@@ -105,8 +144,11 @@ const creatToDoItem = (arrData) => {
 window.onload = () => {
     // pegando evento do submit
     document.getElementById("create-toDo-form").addEventListener("submit",createNewTask);
-    toDoListData.forEach((task) => {
+    if(toDoListData.length > 0){
+        deleteExempleTask();
+        toDoListData.forEach((task) => {
         const item = creatToDoItem(task);
         getItem(item);
-    });
+    })
+    } else setExempleTask();
 }
