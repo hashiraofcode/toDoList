@@ -1,3 +1,31 @@
+// função que verifica as tasks true;
+const isTrue = () => {
+    let ischecked = 0;
+    toDoListData.forEach(({checked}) => {
+        checked? ischecked++ : ischecked = ischecked + 0;
+    })
+    return ischecked;
+}
+// função que manipula a exibição do item;
+const setCountTasks = () => {
+    const localManipuleValue = document.getElementById("count-item");
+    const {quantTasks,checkedTasks} = countData();
+    localManipuleValue.textContent = `${checkedTasks}/${quantTasks} Concluídas`;
+}
+//função que conta as tasks;
+const countData = () => {
+    const quantTasks = toDoListData.length? toDoListData.length : 0;
+    let checkedTasks = isTrue();
+    return {quantTasks, checkedTasks};
+}
+// função que renderiza o contador; 
+const createCountItem = () => {
+    const contentWrapper = document.createElement("p");
+    contentWrapper.ariaLabel = "tarefas concluidas e quantidade total";
+    contentWrapper.id = "count-item";
+    document.getElementById("footer-content")
+    .appendChild(contentWrapper);
+}
 // fazendo uma função que coloca um item de exemplo na exibição;
     const setExempleTask = () => {
        const exempleItemWrapper = document.createElement("li");
@@ -48,14 +76,16 @@ const removeTaskTrue = () => {
         .removeChild(itemAsRemoved);
     });
     taskInDisplay();
+    setCountTasks();
 }
 // pegando o valor do input e atualizando ele na matriz;
 const getCheckboxChecked = (event) => {
     const name = event.target.id;
     const [id] = name.split("-")
+    const isChecked = event.target.checked;
     toDoListData = toDoListData.map((task) => {
         if(parseInt(task.id) === parseInt(id)){
-            return {...task,checked:true};
+            return {...task,checked: isChecked};
         } else return task;
     });
 }
@@ -65,6 +95,7 @@ const removerTask = (idItem) => {
     const deletedItem = document.getElementById(String(idItem));
     document.getElementById("lista").removeChild(deletedItem);
     setTasksInLocalStorage(toDoListData);
+    setCountTasks();
     taskInDisplay();
 }
 // renderiza o item;
@@ -106,10 +137,12 @@ const createNewTask = (event) => {
     console.log(objectValues)
     const item = creatToDoItem(objectValues);
     getItem(item);
-     deleteExempleTask();
+    if(toDoListData.length > 0 && toDoListData.length === 1){
+        deleteExempleTask();
+    }
+    setCountTasks();
     } else alert("Inseira uma tarefa válida");
 }
-
 // função que cria o item a ser renderizado;
 const creatToDoItem = (arrData) => {
     const checkbox = document.createElement("input");
@@ -130,7 +163,10 @@ const creatToDoItem = (arrData) => {
     button.ariaLabel = "deletar tarefa";
     button.onclick = () => {removerTask(getIdForLi)}; 
     wrapper.classList.add("checkbox-label-container");
-
+    wrapper.onchange = (event) => {
+       setCountTasks();
+    }
+   
     wrapper.appendChild(checkbox);
     wrapper.appendChild(label);
     wrapper.appendChild(button);
@@ -144,11 +180,16 @@ const creatToDoItem = (arrData) => {
 window.onload = () => {
     // pegando evento do submit
     document.getElementById("create-toDo-form").addEventListener("submit",createNewTask);
-    if(toDoListData.length > 0){
-        deleteExempleTask();
-        toDoListData.forEach((task) => {
+    console.log(toDoListData.length);
+     toDoListData.forEach((task) => {
         const item = creatToDoItem(task);
         getItem(item);
-    })
-    } else setExempleTask();
+    });
+    if(toDoListData.length > 0 && toDoListData.length === 1){
+        deleteExempleTask();
+    } else if(toDoListData.length === 0){
+        setExempleTask();
+    };
+   createCountItem();
+    setCountTasks();
 }
