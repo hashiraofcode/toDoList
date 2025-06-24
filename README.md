@@ -17,3 +17,7 @@
 6. O contador de tarefas deve ser atualizado na parte inferior sempre que uma tarefa for concluída.
 ---
 # Imagens do Projeto 📷
+![imagem do projeto](https://github.com/hashiraofcode/toDoList/blob/main/image.png)
+---
+## Link do Projeto 🔗
+[![link do projeto](https://img.shields.io/website-up-down-green-red/http/monip.org.svg)](https://dominatarefa.netlify.app/)
