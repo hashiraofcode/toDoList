@@ -20,4 +20,4 @@
 ![imagem do projeto](https://github.com/hashiraofcode/toDoList/blob/main/image.png)
 ---
 ## Link do Projeto 🔗
-[![link do projeto](https://img.shields.io/website-up-down-green-red/http/monip.org.svg)](https://dominatarefa.netlify.app/)
+[![link do projeto](https://img.shields.io/badge/%F0%9F%94%97%20Ver%20Projeto%20no%20Ar-Netlify-blue?style=for-the-badge&logo=netlify)](https://dominatarefa.netlify.app/)
